@@ -1,4 +1,4 @@
-name: Build Extensions
+name: Build Poseidon Debug
 
 on:
   workflow_dispatch:
@@ -24,11 +24,11 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Build Poseidon only
-        run: ./gradlew :src:fr:poseidonscans:assembleRelease
+      - name: Build Poseidon debug
+        run: ./gradlew :src:fr:poseidonscans:assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: poseidon-apk
-          path: "**/*.apk"
+          name: poseidon-debug-apk
+          path: "**/*debug*.apk"
