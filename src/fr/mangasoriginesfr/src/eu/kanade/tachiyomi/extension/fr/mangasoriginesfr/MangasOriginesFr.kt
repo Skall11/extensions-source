@@ -29,7 +29,7 @@ class MangasOriginesFr :
         var chapterElements = document.select(chapterListSelector())
 
         if (chapterElements.isEmpty() && !chaptersWrapper.isNullOrEmpty()) {
-            val mangaUrl = document.location().removeSuffix("/")
+            val mangaUrl = document.location()?.removeSuffix("/") ?: return emptyList()
 
             val xhrRequest = POST("$mangaUrl/ajax/chapters/", xhrHeaders)
             val xhrResponse = client.newCall(xhrRequest).execute()
@@ -38,10 +38,11 @@ class MangasOriginesFr :
             xhrResponse.close()
         }
 
-        return chapterElements.map(::chapterFromElement)
+        return chapterElements.mapNotNull {
+            runCatching { chapterFromElement(it) }.getOrNull()
+        }
     }
 
-    // Manga Details Selectors
     override val mangaDetailsSelectorAuthor = "div.manga-authors > a"
     override val mangaDetailsSelectorDescription = "div.summary__content > p"
 }
