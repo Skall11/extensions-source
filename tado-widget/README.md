@@ -40,5 +40,7 @@ quand tado le renvoie. Le programme d'une pièce est chargé une fois puis mis e
 ## Notes
 
 - API non officielle (celle de app.tado.com) : peut changer sans préavis.
-- tado V3/V3+ : testé sur format de réponses connu. tado X (hops.tado.com) : support best-effort.
+- tado X : API hops.tado.com (`/homes/{id}/rooms`, `/rooms/{id}/schedule`), endpoints et champs
+  vérifiés contre PyTado et les intégrations Home Assistant tado X. Détection auto (`generation: LINE_X`).
+- tado V3/V3+ : API my.tado.com/api/v2, détection auto aussi.
 - Lecture seule : rien n'est modifié sur ton installation.

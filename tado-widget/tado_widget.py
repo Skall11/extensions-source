@@ -9,7 +9,7 @@ de python.org).
 Utilise l'API web non officielle de tado (celle de l'appli / app.tado.com) :
   - Auth : OAuth2 "device code" sur login.tado.com (on valide dans le navigateur,
     aucun mot de passe n'est stocké, seulement un refresh token local).
-  - Données : my.tado.com/api/v2 (tado V3/V3+) ou hops.tado.com (tado X).
+  - Données : my.tado.com/api/v2 (tado V3/V3+) ou hops.tado.com (tado X, détecté automatiquement).
 
 Usage :
   python tado_widget.py              # lance le widget
@@ -303,8 +303,9 @@ class TadoClient:
                 "target": (setting.get("temperature") or {}).get("value"),
                 "heat": (r.get("heatingPower") or {}).get("percentage"),
                 "manual": r.get("manualControlTermination") is not None,
+                "boost": r.get("boostMode") is not None,
                 "away": False,
-                "window": bool(r.get("openWindow")),
+                "window": bool((r.get("openWindow") or {}).get("activated")),
                 "offline": (r.get("connection") or {}).get("state") == "DISCONNECTED",
                 "next_at": parse_iso(nxt.get("start")),
                 "next_temp": (nset.get("temperature") or {}).get("value") if nset.get("power") == "ON" else None,
@@ -632,7 +633,7 @@ class App:
             bits.append("🪟 fenêtre ouverte")
         if z.get("away"):
             bits.append("absent")
-        bits.append("manuel" if z.get("manual") else "auto")
+        bits.append("boost" if z.get("boost") else "manuel" if z.get("manual") else "auto")
         if z.get("next_at"):
             nt = fmt_t(z["next_temp"]) if z.get("next_on") else "off"
             bits.append(f"→ {nt} à {z['next_at']:%H:%M}")
