@@ -1,0 +1,6 @@
+release/
+dist/
+build/
+*.spec
+icon.ico
+__pycache__/
