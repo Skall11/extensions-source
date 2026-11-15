@@ -1,0 +1,40 @@
+name: Tado widget (Windows exe)
+
+on:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - 'tado-widget/**'
+      - '.github/workflows/tado_widget.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install build deps
+        run: pip install pyinstaller==6.11.1 pystray==0.19.5 pillow==11.0.0
+
+      - name: Build TadoWidget.exe
+        working-directory: tado-widget
+        run: |
+          python -c "import tado_widget as t; t.make_icon(256).save('icon.ico', sizes=[(16,16),(24,24),(32,32),(48,48),(64,64),(128,128),(256,256)])"
+          pyinstaller --onefile --noconsole --name TadoWidget --icon icon.ico tado_widget.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TadoWidget
+          path: tado-widget/dist/TadoWidget.exe
+          retention-days: 90
